@@ -45,8 +45,16 @@ bool readSwitch(byte channelInput, bool defaultValue){
 }
 
 
+float readChannelFloat(int channelInput, float minLimit, float maxLimit, float defaultValue){
+  float ch = pulseIn(channelInput, HIGH, 30000);
+  if (ch < 100) return defaultValue;
+  return map(ch, 1000, 2000, minLimit, maxLimit);
+}
 
-Servo myservo;
+
+
+Servo servo1;
+Servo servo2;
 
 int pos = 90;
  
@@ -63,7 +71,8 @@ void setup(){
   pinMode(CH6, INPUT);
   pinMode(2, OUTPUT);
 
-  myservo.attach(12);
+  servo1.attach(12);
+  servo2.attach(10);
 
 
  
@@ -80,8 +89,71 @@ void loop() {
   ch4Value = readChannel(CH4, -100, 100, 0);
   ch5Value = readSwitch(CH5, false);
   ch6Value = readSwitch(CH6, false);
+
+
+int servo1pos = 90;
+int servo1target = 90;
+int servo2pos = 90;
+int servo2target = 90;
+float a = 0;
+float b = 0;
+float R = 0;
+float L = 0;
+
+
+while(true){
   
-  // Print to Serial Monitor
+   a = readChannel(CH2, -1000, 1000, 0);
+   b = readChannel(CH1, -1000, 1000, 0);
+
+   a = a/1000;
+   b = b/1000;
+
+
+
+
+   
+   L = (a+b)/(abs(a)*abs(b)+1)*1000;
+   R = (- a+b)/(abs(a)*abs(b)+1)*1000;
+
+   servo1target = map(L, -1000,1000,40,140);
+   servo2target = map(R, -1000,1000,40,140);
+
+
+//   Serial.print(servo1target);
+//   Serial.print(" ");
+//   Serial.println(servo2target);
+   
+   
+   if (servo1pos < servo1target){
+      servo1pos++;
+      servo1.write(servo1pos);
+   }else if(servo1pos > servo1target){
+      servo1pos--;
+      servo1.write(servo1pos);
+    }
+
+   if (servo2pos < servo2target){
+      servo2pos++;
+      servo2.write(servo2pos);
+   }else if(servo2pos > servo2target){
+      servo2pos--;
+      servo2.write(servo2pos);
+   } 
+    
+   Serial.print(servo1pos);
+   Serial.print(" ");
+   Serial.println(servo2pos);
+   
+   
+   delay(5);
+
+   
+}
+
+
+
+// Print to Serial Monitor
 //  Serial.print("Ch1: ");
 //  Serial.print(ch1Value);
 //  Serial.print(" | Ch2: ");
@@ -114,116 +186,6 @@ void loop() {
 //  }
 //
 
-
-
-//Serial.println(pos);
-
-
-//if (ch2Value > pos){
-//  pos += 1; //min(abs(ch2Value-pos),1);
-//  pos = min(pos,175);
-//  myservo.write(pos);
-//}else if(ch2Value < pos){
-//  pos -= 1; //min(abs(ch2Value-pos),1);
-//  pos = max(pos,5);
-//  myservo.write(pos);
-//}else{
-//  myservo.write(pos);
-//}
-//delay(20);
-
-
-
-//if (!(abs(ch2Value-pos) == 0)){
-//  pos += (ch2Value-pos)/abs(ch2Value-pos); 
-//  //pos = max(min(pos,175),5);
-//  myservo.write(pos);
-//delay(20);
-//}
-
-
-
-
-    
-    int s = 1;
-
-    int i = 90;
-    int top = 170;
-    int bottom = 25;
-    int width = 0;
-
-if(ch2Value-pos > 0){
-    bottom = pos;
-    top = ch2Value;
-for (i = bottom-10; i < top ; i += s){
-   width = top-bottom;
-    
-    if(i <max(top-width/4,5) && i > max(bottom+width/4,5)){
-      s = 4;
-      }else{
-      s = 1;
-      }
-
-    myservo.write(i);
-    Serial.println(i);
-
-    pos = i;
-    delay(15);  
-    }
-    delay(15);
-}else if((ch2Value-pos < 0)){
-    bottom = ch2Value;
-    top = pos;
-for (i = top+10; i > bottom ; i -= s){
-    if(i <max(top-width/4,5) && i > max(bottom+width/4,5)){
-      s = 4;
-      }else{
-      s = 1;
-      }
-
-
-    myservo.write(i);
-    Serial.println(i);
-
-    pos = i;
-    delay(15);  
-    }
-    delay(15); 
-
-} else{
-myservo.write(pos);
-delay(15); 
-}
-
-
-//
-//int h = 0;
-//
-//  for (pos = 1; pos <= 160; pos += 1) { // goes from 0 degrees to 180 degrees
-//    
-//    h = min(1, h++);
-//    //Serial.print(abs(ch2Value));
-//    //Serial.print("-");
-//    Serial.println(pos);
-//
-//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-//    delay(15);                       // waits 15ms for the servo to reach the position
-//    }
-//    h = 0;
-//  for (pos = 179; pos >= 20; pos -= 1) { // goes from 180 degrees to 0 degrees
-//    h = min(1, h++);
-//    //Serial.print(abs(ch2Value));
-//    //Serial.print("-");
-//    Serial.println(pos);
-//    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-//    delay(15);                       // waits 15ms for the servo to reach the position
-//    }
-
-
-//ch3Value = readChannel(CH3, 0, 180, 100); 
-//myservo.write(135);
-//  
-//  delay(0);
 
   
 }

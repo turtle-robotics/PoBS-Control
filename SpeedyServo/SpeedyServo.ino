@@ -71,8 +71,8 @@ void setup(){
   pinMode(CH6, INPUT);
   pinMode(2, OUTPUT);
 
-  servo1.attach(12);
-  servo2.attach(10);
+  servo1.attach(10); //Left Motor 
+  servo2.attach(12); //Right Motor
 
 
  
@@ -102,10 +102,10 @@ float L = 0;
 
 
 while(true){
-  
+   //=Serial.println(readChannel(CH2, -1000, 1000, 0));
    a = readChannel(CH2, -1000, 1000, 0);
    b = readChannel(CH1, -1000, 1000, 0);
-
+  Serial.println(a);
    a = a/1000;
    b = b/1000;
 
@@ -116,8 +116,8 @@ while(true){
    L = (a+b)/(abs(a)*abs(b)+1)*1000;
    R = (- a+b)/(abs(a)*abs(b)+1)*1000;
 
-   servo1target = map(L, -1000,1000,40,140);
-   servo2target = map(R, -1000,1000,40,140);
+   servo1target = map(L, -1000,1000,50,130);
+   servo2target = map(R, -1000,1000,50,130);
 
 
 //   Serial.print(servo1target);
@@ -141,12 +141,12 @@ while(true){
       servo2.write(servo2pos);
    } 
     
-   Serial.print(servo1pos);
-   Serial.print(" ");
-   Serial.println(servo2pos);
+   //Serial.print(servo1pos);
+   //Serial.print(" ");
+   //Serial.println(servo2pos);
    
    
-   delay(5);
+   delay(15);
 
    
 }
